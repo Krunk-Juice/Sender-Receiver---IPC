@@ -73,10 +73,18 @@ void init(int& shmid, int& msqid, void*& sharedMemPtr)
 		printf("SUCCESS: Attached pointer to shared memory segment.\n");
 
 	/* TODO: Attach to the message queue */
-	/* Store the IDs and the pointer to the shared memory region in the corresponding function parameters */
-	
+
 	printf("Attach message to queue.\n");
+	msqid = msgget(key, 0666 | IPC_CREAT);
+	if (msqid == -1) {
+		cerr << "FAILURE: Unable to attach message to queue." << endl;
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("SUCCESS: Attached to message queue.\n");
 	
+
+	/* Store the IDs and the pointer to the shared memory region in the corresponding function parameters */
 }
 
 /**
