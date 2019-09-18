@@ -25,7 +25,7 @@ void* sharedMemPtr;
  */
 void init(int& shmid, int& msqid, void*& sharedMemPtr)
 {
-	/* TODO: 
+	/* COMPLETE: 
         1. Create a file called keyfile.txt containing string "Hello world" (you may do
  	    so manually or from the code).
 	2. Use ftok("keyfile.txt", 'a') in order to generate the key. */
@@ -49,9 +49,9 @@ void init(int& shmid, int& msqid, void*& sharedMemPtr)
 	
 
 	
-	/* TODO: Get the id of the shared memory segment. The size of the segment must be SHARED_MEMORY_CHUNK_SIZE */
+	/* COMPLETE: Get the id of the shared memory segment. The size of the segment must be SHARED_MEMORY_CHUNK_SIZE */
 
-	printf("Obtain the ID of the shared memory segment.\n");
+	printf("Obtaining ID of the shared memory segment...\n");
 	shmid = shmget(key, SHARED_MEMORY_CHUNK_SIZE, 0666|IPC_CREAT);
 	if (shmid == -1) {
 		cerr << "FAILURE: Failed to obtain the shared memory segment ID." << endl;
@@ -61,9 +61,9 @@ void init(int& shmid, int& msqid, void*& sharedMemPtr)
 		printf("SUCCESS: Shared memory segment ID obtained.\n");
 	
 
-	/* TODO: Attach to the shared memory */
+	/* COMPLETE: Attach to the shared memory */
 
-	printf("Attach pointer to shared memory.\n");
+	printf("Attaching pointer to shared memory...\n");
 	sharedMemPtr = shmat(shmid,(void *) 0, 0);
 	if((int)sharedMemPtr == -1) {
 		cerr << "FAILURE: Unable to attach pointer to shared memory." << endl;
@@ -72,9 +72,9 @@ void init(int& shmid, int& msqid, void*& sharedMemPtr)
 	else
 		printf("SUCCESS: Attached pointer to shared memory segment.\n");
 
-	/* TODO: Attach to the message queue */
+	/* COMPLETE: Attach to the message queue */
 
-	printf("Attach message to queue.\n");
+	printf("Attaching message to queue...\n");
 	msqid = msgget(key, 0666 | IPC_CREAT);
 	if (msqid == -1) {
 		cerr << "FAILURE: Unable to attach message to queue." << endl;
@@ -95,7 +95,16 @@ void init(int& shmid, int& msqid, void*& sharedMemPtr)
  */
 void cleanUp(const int& shmid, const int& msqid, void* sharedMemPtr)
 {
-	/* TODO: Detach from shared memory */
+	/* COMPLETE: Detach from shared memory */
+
+	printf("Detaching pointer from shared memory...\n");
+	if (shmdt(sharedMemPtr) == -1) {
+		cerr << "FAILURE: Unable to detach pointer from shared memory." << endl;
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("SUCCESS: Pointer detached from shared memory.\n");
+	
 }
 
 /**
