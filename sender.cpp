@@ -4,7 +4,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <iostream>
 #include "msg.h"    /* For the message struct */
+
+using namespace std;
 
 /* The size of the shared memory segment */
 #define SHARED_MEMORY_CHUNK_SIZE 1000
@@ -25,8 +28,19 @@ void init(int& shmid, int& msqid, void*& sharedMemPtr)
 	/* TODO: 
         1. Create a file called keyfile.txt containing string "Hello world" (you may do
  	    so manually or from the code).
-	2. Use ftok("keyfile.txt", 'a') in order to generate the key.
-	3. Use will use this key in the TODO's below. Use the same key for the queue
+	2. Use ftok("keyfile.txt", 'a') in order to generate the key. */
+
+	key_t key = ftok("keyfile.txt", 'a');
+	printf("Generating ftok key...\n");
+	if (key == -1) {
+		cerr << "FAILURE: ftok key has not been generated." << endl;
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("SUCCESS: ftok key generated.\n");
+
+
+	/* 3. Use will use this key in the TODO's below. Use the same key for the queue
 	   and the shared memory segment. This also serves to illustrate the difference
  	   between the key and the id used in message queues and shared memory. The key is
 	   like the file name and the id is like the file object.  Every System V object 
@@ -36,9 +50,32 @@ void init(int& shmid, int& msqid, void*& sharedMemPtr)
 
 	
 	/* TODO: Get the id of the shared memory segment. The size of the segment must be SHARED_MEMORY_CHUNK_SIZE */
+
+	printf("Obtain the ID of the shared memory segment.\n");
+	shmid = shmget(key, SHARED_MEMORY_CHUNK_SIZE, 0666|IPC_CREAT);
+	if (shmid == -1) {
+		cerr << "FAILURE: Failed to obtain the shared memory segment ID." << endl;
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("SUCCESS: Shared memory segment ID obtained.\n");
+	
+
 	/* TODO: Attach to the shared memory */
+
+	printf("Attach pointer to shared memory.\n");
+	sharedMemPtr = shmat(shmid,(void *) 0, 0);
+	if((int)sharedMemPtr == -1) {
+		cerr << "FAILURE: Unable to attach pointer to shared memory." << endl;
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("SUCCESS: Attached pointer to shared memory segment.\n");
+
 	/* TODO: Attach to the message queue */
 	/* Store the IDs and the pointer to the shared memory region in the corresponding function parameters */
+	
+	printf("Attach message to queue.\n");
 	
 }
 
