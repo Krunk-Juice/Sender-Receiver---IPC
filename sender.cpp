@@ -148,7 +148,7 @@ unsigned long sendFile(const char* fileName)
 			exit(-1);
 		}
 		
-		/* TODO: count the number of bytes sent. */	
+		/* COMPLETE? TODO: count the number of bytes sent. */	
 
 		printf("%d bytes sent.", sndMsg.size);	
 			
