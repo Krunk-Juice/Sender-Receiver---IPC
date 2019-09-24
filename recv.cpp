@@ -156,7 +156,7 @@ unsigned long mainLoop(const char* fileName)
 	while(msgSize != 0)
 	{	
 
-		/* TODO: Receive the message and get the value of the size field. The message will be of 
+		/* COMPLETE: Receive the message and get the value of the size field. The message will be of 
 		 * of type SENDER_DATA_TYPE. That is, a message that is an instance of the message struct with 
 		 * mtype field set to SENDER_DATA_TYPE (the macro SENDER_DATA_TYPE is defined in 
 		 * msg.h).  If the size field of the message is not 0, then we copy that many bytes from 
@@ -169,11 +169,14 @@ unsigned long mainLoop(const char* fileName)
 		 */
 
 		message msg;
+		printf("Receiving message...\n");
 		if(msgrcv(msqid, &msg, sizeof(message) - sizeof(long), SENDER_DATA_TYPE, 0) == -1) {
 			perror("FAILURE: Message could not be received.\n");
 			fclose(fp);
 			exit(EXIT_FAILURE);
 		}
+		else
+			printf("SUCCESS: Message received.\n");
 		
 		/* If the sender is not telling us that we are done, then get to work */
 		if(msgSize != 0)
@@ -181,6 +184,7 @@ unsigned long mainLoop(const char* fileName)
 			/* COMPLETE: count the number of bytes received */
 
 			numBytesRecv += msgSize;
+			printf("%d bytes received.\n", numBytesRecv);
 			
 			/* Save the shared memory to file */
 			if(fwrite(sharedMemPtr, sizeof(char), msgSize, fp) < 0)
@@ -188,10 +192,21 @@ unsigned long mainLoop(const char* fileName)
 				perror("fwrite");
 			}
 			
-			/* TODO: Tell the sender that we are ready for the next set of bytes. 
+			/* COMPLETE: Tell the sender that we are ready for the next set of bytes. 
  			 * I.e., send a message of type RECV_DONE_TYPE. That is, a message
 			 * of type ackMessage with mtype field set to RECV_DONE_TYPE. 
  			 */
+
+			ackMessage doneMsg;
+			doneMsg.mtype = RECV_DONE_TYPE;
+			printf("Telling sender we are ready for the next set of bytes.\n");
+			if(msgsnd(msqid, &doneMsg, sizeof(ackMessage) - sizeof(long), 0) == -1) {
+				perror("FAILURE: Unable to reply to sender.\n");
+				exit(EXIT_FAILURE);
+			} 
+			else
+				printf("SUCCESS: Replied to sender.\n");
+
 		}
 		/* We are done */
 		else
@@ -214,11 +229,35 @@ unsigned long mainLoop(const char* fileName)
  */
 void cleanUp(const int& shmid, const int& msqid, void* sharedMemPtr)
 {
-	/* TODO: Detach from shared memory */
+	/* COMPLETE: Detach from shared memory */
+
+	printf("Detaching from shared memory...\n");
+	if(shmdt(sharedMemPtr) == -1) {
+		perror("FAILURE: Unable to detach from shared memory.\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("SUCCESS: Detached from shared memory.\n");
 	
-	/* TODO: Deallocate the shared memory segment */
+	/* COMPLETE: Deallocate the shared memory segment */
+
+	printf("Deallocating the shared memory segment...\n");
+	if(shmctl(shmid, IPC_RMID, NULL) == -1) {
+		perror("FAILURE: Unable to deallocate the shared memory segment.\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("SUCCESS: Deallocated shared memory segment.\n");
 	
-	/* TODO: Deallocate the message queue */
+	/* COMPLETE: Deallocate the message queue */
+
+	printf("Deallocating message queue...\n");
+	if(msgctl(msqid, IPC_RMID, NULL) == -1) {
+		perror("FAILURE: Unable to deallocate the message queue.\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("SUCCESS: Deallocated message queue.\n");
 }
 
 /**
@@ -234,11 +273,13 @@ void ctrlCSignal(int signal)
 int main(int argc, char** argv)
 {
 	
-	/* TODO: Install a signal handler (see signaldemo.cpp sample file).
+	/* COMPLETE: Install a signal handler (see signaldemo.cpp sample file).
  	 * If user presses Ctrl-c, your program should delete the message
  	 * queue and the shared memory segment before exiting. You may add 
 	 * the cleaning functionality in ctrlCSignal().
  	 */
+
+	signal(SIGINT, ctrlCSignal);
 				
 	/* Initialize */
 	init(shmid, msqid, sharedMemPtr);
@@ -249,9 +290,11 @@ int main(int argc, char** argv)
 	/* Go to the main loop */
 	fprintf(stderr, "The number of bytes received is: %lu\n", mainLoop(fileName.c_str()));
 
-	/* TODO: Detach from shared memory segment, and deallocate shared memory 
+	/* COMPLETE: Detach from shared memory segment, and deallocate shared memory 
 	 * and message queue (i.e. call cleanup) 
 	 */
+
+	cleanUp(shmid, msqid, sharedMemPtr);
 		
 	return 0;
 }
