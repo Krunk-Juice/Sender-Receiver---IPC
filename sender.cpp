@@ -153,7 +153,7 @@ unsigned long sendFile(const char* fileName)
 		/* COMPLETE? TODO: count the number of bytes sent. */	
 
 		numBytesSent += sndMsg.size;
-		printf("%f bytes sent.\n", numBytesSent);
+		printf("%lu bytes sent.\n", numBytesSent);
 			
 		/* COMPLETE: Send a message to the receiver telling him that the data is ready
  		 * to be read (message of type SENDER_DATA_TYPE).
