@@ -28,13 +28,22 @@ string recvFileName()
 	/* The file name received from the sender */
 	string fileName;
         
-	/* TODO: declare an instance of the fileNameMsg struct to be
+	/* COMPLETE: declare an instance of the fileNameMsg struct to be
 	 * used for holding the message received from the sender.
          */
 
-        /* TODO: Receive the file name using msgrcv() */
+	fileNameMsg msg;
+
+        /* COMPLETE: Receive the file name using msgrcv() */
+
+	if(msgrcv(msqid, &msg, sizeof(fileNameMsg) - sizeof(long), FILE_NAME_TRANSFER_TYPE, 0) == -1) {
+		perror("FAILURE: Message could not be received.\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+		fileName = msg.fileName;
 	
-	/* TODO: return the received file name */
+	/* COMPLETE: return the received file name */
 	
         return fileName;
 }
@@ -49,24 +58,64 @@ void init(int& shmid, int& msqid, void*& sharedMemPtr)
 	
 	/* TODO: 
         1. Create a file called keyfile.txt containing string "Hello world" (you may do
- 	    so manually or from the code).
-	2. Use ftok("keyfile.txt", 'a') in order to generate the key.
-	3. Use will use this key in the TODO's below. Use the same key for the queue
+ 	    so manually or from the code). */
+
+	key_t key = ftok("keyfile.txt", 'a');
+
+	/* 2. Use ftok("keyfile.txt", 'a') in order to generate the key. */
+
+	printf("Generating ftok key...\n");
+	if (key == -1) {
+		perror("FAILURE: ftok key has not been generated.\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("SUCCESS: ftok key generated.\n");
+
+	/* 3. Use will use this key in the TODO's below. Use the same key for the queue
 	   and the shared memory segment. This also serves to illustrate the difference
  	   between the key and the id used in message queues and shared memory. The key is
 	   like the file name and the id is like the file object.  Every System V object 
 	   on the system has a unique id, but different objects may have the same key.
 	*/
-	
 
-	/* TODO: Allocate a shared memory segment. The size of the segment must be SHARED_MEMORY_CHUNK_SIZE. */
+	/* COMPLETE: Allocate a shared memory segment. The size of the segment must be SHARED_MEMORY_CHUNK_SIZE. */
+
+	printf("Allocating shared memory segment...\n");
+	shmid = shmget(key, SHARED_MEMORY_CHUNK_SIZE, 0666 | IPC_CREAT);
+	if(shmid == -1) {
+		perror("FAILURE: Could not allocate shared memory segment.\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("SUCCESS: Allocate shared memory segment.\n");
 	
-	/* TODO: Attach to the shared memory */
+	/* COMPLETE: Attach to the shared memory */
+
+	printf("Attaching to shared memory segment...\n");
+	sharedMemPtr = shmat(shmid, (void *) 0, 0);
+	if(sharedMemPtr == (void *) -1) {
+		perror("FAILURE: Unable to attach pointer to shared memory segment.\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("SUCCESS: Attached pointer to shared memory segment.\n");
 	
-	/* TODO: Create a message queue */
+	/* COMPLETE: Create a message queue */
+
+	printf("Creating message queue...\n");
+	msqid = msgget(key, 0666 | IPC_CREAT);
+	if(msqid == -1) {
+		perror("FAILURE: Unable to create message queue.\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("SUCCESS: Message queue created.\n");
 	
-	/* TODO: Store the IDs and the pointer to the shared memory region in the corresponding parameters */
+	/* COMPLETE: Store the IDs and the pointer to the shared memory region in the corresponding parameters */
 	
+	// Completed in each of the previous tasks.
+
 }
  
 
@@ -87,6 +136,8 @@ unsigned long mainLoop(const char* fileName)
 	string recvFileNameStr = fileName;
 	
 	/* TODO: append __recv to the end of file name */
+
+	recvFileNameStr = fileName;
 	
 	/* Open the file for writing */
 	FILE* fp = fopen(recvFileNameStr.c_str(), "w");
@@ -116,11 +167,20 @@ unsigned long mainLoop(const char* fileName)
 		 * <ORIGINAL FILENAME__recv>. For example, if the name of the original
 		 * file is song.mp3, the name of the received file is going to be song.mp3__recv.
 		 */
+
+		message msg;
+		if(msgrcv(msqid, &msg, sizeof(message) - sizeof(long), SENDER_DATA_TYPE, 0) == -1) {
+			perror("FAILURE: Message could not be received.\n");
+			fclose(fp);
+			exit(EXIT_FAILURE);
+		}
 		
 		/* If the sender is not telling us that we are done, then get to work */
 		if(msgSize != 0)
 		{
-			/* TODO: count the number of bytes received */
+			/* COMPLETE: count the number of bytes received */
+
+			numBytesRecv += msgSize;
 			
 			/* Save the shared memory to file */
 			if(fwrite(sharedMemPtr, sizeof(char), msgSize, fp) < 0)

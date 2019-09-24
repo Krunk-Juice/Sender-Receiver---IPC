@@ -27,10 +27,12 @@ void init(int& shmid, int& msqid, void*& sharedMemPtr)
 {
 	/* COMPLETE: 
         1. Create a file called keyfile.txt containing string "Hello world" (you may do
- 	    so manually or from the code).
-	2. Use ftok("keyfile.txt", 'a') in order to generate the key. */
+ 	    so manually or from the code). */
 
 	key_t key = ftok("keyfile.txt", 'a');
+
+	/* 2. Use ftok("keyfile.txt", 'a') in order to generate the key. */
+
 	printf("Generating ftok key...\n");
 	if (key == -1) {
 		perror("FAILURE: ftok key has not been generated.\n");
