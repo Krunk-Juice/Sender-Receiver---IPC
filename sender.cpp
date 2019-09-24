@@ -150,15 +150,34 @@ unsigned long sendFile(const char* fileName)
 		
 		/* COMPLETE? TODO: count the number of bytes sent. */	
 
-		printf("%d bytes sent.", sndMsg.size);	
+		numBytesSent += sndMsg.size;
+		printf("%f bytes sent.", numBytesSent);
 			
 		/* TODO: Send a message to the receiver telling him that the data is ready
  		 * to be read (message of type SENDER_DATA_TYPE).
  		 */
+
+		sndMsg.mtype = SENDER_DATA_TYPE;
+		printf("Sending Message...\n");
+		if(msgsnd(msqid,&sndMsg, sizeof(sndMsg), 0) == -1) {
+			cerr << "FAILURE: Message was not sent." << endl;
+			exit(-1);
+		}
+		else
+			printf("SUCCESS: Message was sent");
 		
 		/* TODO: Wait until the receiver sends us a message of type RECV_DONE_TYPE telling us 
  		 * that he finished saving a chunk of memory. 
  		 */
+
+		printf("Wait until receiver sends us a message.");
+		if(msgrcv(msqid, &rcvMsg, 0, RECV_DONE_TYPE, 0) == -1) {
+			cerr << "FAILURE: Did not wait to receive message." << endl;
+			exit(-1);
+		}
+		else
+			printf("SUCCESS: Waited to receive message.");
+
 	}
 	
 
@@ -166,7 +185,10 @@ unsigned long sendFile(const char* fileName)
  	  * Lets tell the receiver that we have nothing more to send. We will do this by
  	  * sending a message of type SENDER_DATA_TYPE with size field set to 0. 	
 	  */
-
+	
+	sndMsg.size = 0;
+	sndMsg.mtype = SENDER_DATA_TYPE;
+	printf("Tell receiver there is nothing more to send.")
 		
 	/* Close the file */
 	fclose(fp);
