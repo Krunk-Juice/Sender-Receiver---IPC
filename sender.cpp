@@ -33,7 +33,7 @@ void init(int& shmid, int& msqid, void*& sharedMemPtr)
 	key_t key = ftok("keyfile.txt", 'a');
 	printf("Generating ftok key...\n");
 	if (key == -1) {
-		cerr << "FAILURE: ftok key has not been generated." << endl;
+		perror("FAILURE: ftok key has not been generated.\n");
 		exit(EXIT_FAILURE);
 	}
 	else
@@ -54,7 +54,7 @@ void init(int& shmid, int& msqid, void*& sharedMemPtr)
 	printf("Obtaining ID of the shared memory segment...\n");
 	shmid = shmget(key, SHARED_MEMORY_CHUNK_SIZE, 0666|IPC_CREAT);
 	if (shmid == -1) {
-		cerr << "FAILURE: Failed to obtain the shared memory segment ID." << endl;
+		perror("FAILURE: Failed to obtain the shared memory segment ID.\n");
 		exit(EXIT_FAILURE);
 	}
 	else
@@ -66,7 +66,7 @@ void init(int& shmid, int& msqid, void*& sharedMemPtr)
 	printf("Attaching pointer to shared memory...\n");
 	sharedMemPtr = shmat(shmid,(void *) 0, 0);
 	if((int)sharedMemPtr == -1) {
-		cerr << "FAILURE: Unable to attach pointer to shared memory." << endl;
+		perror("FAILURE: Unable to attach pointer to shared memory.\n");
 		exit(EXIT_FAILURE);
 	}
 	else
@@ -77,7 +77,7 @@ void init(int& shmid, int& msqid, void*& sharedMemPtr)
 	printf("Attaching message to queue...\n");
 	msqid = msgget(key, 0666 | IPC_CREAT);
 	if (msqid == -1) {
-		cerr << "FAILURE: Unable to attach message to queue." << endl;
+		perror("FAILURE: Unable to attach message to queue.\n");
 		exit(EXIT_FAILURE);
 	}
 	else
@@ -99,7 +99,7 @@ void cleanUp(const int& shmid, const int& msqid, void* sharedMemPtr)
 
 	printf("Detaching pointer from shared memory...\n");
 	if (shmdt(sharedMemPtr) == -1) {
-		cerr << "FAILURE: Unable to detach pointer from shared memory." << endl;
+		perror("FAILURE: Unable to detach pointer from shared memory.\n");
 		exit(EXIT_FAILURE);
 	}
 	else
@@ -151,44 +151,50 @@ unsigned long sendFile(const char* fileName)
 		/* COMPLETE? TODO: count the number of bytes sent. */	
 
 		numBytesSent += sndMsg.size;
-		printf("%f bytes sent.", numBytesSent);
+		printf("%f bytes sent.\n", numBytesSent);
 			
-		/* TODO: Send a message to the receiver telling him that the data is ready
+		/* COMPLETE: Send a message to the receiver telling him that the data is ready
  		 * to be read (message of type SENDER_DATA_TYPE).
  		 */
 
 		sndMsg.mtype = SENDER_DATA_TYPE;
 		printf("Sending Message...\n");
 		if(msgsnd(msqid,&sndMsg, sizeof(sndMsg), 0) == -1) {
-			cerr << "FAILURE: Message was not sent." << endl;
-			exit(-1);
+			perror("FAILURE: Message was not sent.\n");
+			exit(EXIT_FAILURE);
 		}
 		else
-			printf("SUCCESS: Message was sent");
+			printf("SUCCESS: Message was sent.\n");
 		
-		/* TODO: Wait until the receiver sends us a message of type RECV_DONE_TYPE telling us 
+		/* COMPLETE: Wait until the receiver sends us a message of type RECV_DONE_TYPE telling us 
  		 * that he finished saving a chunk of memory. 
  		 */
 
 		printf("Wait until receiver sends us a message.");
 		if(msgrcv(msqid, &rcvMsg, 0, RECV_DONE_TYPE, 0) == -1) {
-			cerr << "FAILURE: Did not wait to receive message." << endl;
+			perror("FAILURE: Did not wait to receive message.\n");
 			exit(-1);
 		}
 		else
-			printf("SUCCESS: Waited to receive message.");
+			printf("SUCCESS: Waited to receive message.\n");
 
 	}
 	
 
-	/** TODO: once we are out of the above loop, we have finished sending the file.
+	/** COMPLETE: once we are out of the above loop, we have finished sending the file.
  	  * Lets tell the receiver that we have nothing more to send. We will do this by
  	  * sending a message of type SENDER_DATA_TYPE with size field set to 0. 	
 	  */
 	
 	sndMsg.size = 0;
 	sndMsg.mtype = SENDER_DATA_TYPE;
-	printf("Tell receiver there is nothing more to send.")
+	printf("Sender tells receiver there is nothing more to send.\n");
+	if(msgsnd(msqid, &sndMsg, sizeof(sndMsg), 0) == -1) {
+		perror("FAILURE: Sender could not tell receiver.\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("SUCCESS: Sender told receiver.\n");
 		
 	/* Close the file */
 	fclose(fp);
@@ -205,20 +211,40 @@ void sendFileName(const char* fileName)
 	/* Get the length of the file name */
 	int fileNameSize = strlen(fileName);
 
-	/* TODO: Make sure the file name does not exceed 
+	/* COMPLETE: Make sure the file name does not exceed 
 	 * the maximum buffer size in the fileNameMsg
 	 * struct. If exceeds, then terminate with an error.
 	 */
 
-	/* TODO: Create an instance of the struct representing the message
+	if(fileNameSize > (sizeof(fileNameMsg) - sizeof(long))) {
+		perror("FAILURE: File name exceeded the maximum buffer.\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("SUCCESS: File name does not exceed maximum buffer size.\n");
+
+	/* COMPLETE: Create an instance of the struct representing the message
 	 * containing the name of the file.
 	 */
 
-	/* TODO: Set the message type FILE_NAME_TRANSFER_TYPE */
+	fileNameMsg msg;
 
-	/* TODO: Set the file name in the message */
+	/* COMPLETE: Set the message type FILE_NAME_TRANSFER_TYPE */
 
-	/* TODO: Send the message using msgsnd */
+	msg.mtype = FILE_NAME_TRANSFER_TYPE;
+
+	/* COMPLETE: Set the file name in the message */
+
+	strncpy(msg.fileName, fileName, fileNameSize + 1);
+
+	/* COMPLETE: Send the message using msgsnd */
+
+	if(msgsnd(msqid, &msg, sizeof(msg) - sizeof(long), 0) == -1) {
+		perror("FAILURE: Message could not be sent.\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("SUCCESS: Message sent.\n");
 }
 
 
