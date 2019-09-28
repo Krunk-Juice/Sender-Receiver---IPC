@@ -36,12 +36,15 @@ string recvFileName()
 
         /* COMPLETE: Receive the file name using msgrcv() */
 
+	printf("Recieving file name from sender...\n");
 	if(msgrcv(msqid, &msg, sizeof(fileNameMsg) - sizeof(long), FILE_NAME_TRANSFER_TYPE, 0) == -1) {
-		perror("FAILURE: Message could not be received.\n");
+		perror("FAILURE: Message file name could not be received.\n");
 		exit(EXIT_FAILURE);
 	}
-	else
+	else {
+		printf("SUCCESS: Message file name received.\n");
 		fileName = msg.fileName;
+	}
 	
 	/* COMPLETE: return the received file name */
 	
@@ -56,7 +59,7 @@ string recvFileName()
 void init(int& shmid, int& msqid, void*& sharedMemPtr)
 {
 	
-	/* TODO: 
+	/* COMPLETE: 
         1. Create a file called keyfile.txt containing string "Hello world" (you may do
  	    so manually or from the code). */
 
@@ -135,9 +138,10 @@ unsigned long mainLoop(const char* fileName)
 	/* The string representing the file name received from the sender */
 	string recvFileNameStr = fileName;
 	
-	/* TODO: append __recv to the end of file name */
+	/* COMPLETE: append __recv to the end of file name */
 
-	recvFileNameStr = fileName;
+	recvFileNameStr.erase(recvFileNameStr.end() - 4, recvFileNameStr.end());
+	recvFileNameStr.append("__recv.txt");
 	
 	/* Open the file for writing */
 	FILE* fp = fopen(recvFileNameStr.c_str(), "w");
@@ -170,13 +174,16 @@ unsigned long mainLoop(const char* fileName)
 
 		message msg;
 		printf("Receiving message...\n");
-		if(msgrcv(msqid, &msg, sizeof(message) - sizeof(long), SENDER_DATA_TYPE, 0) == -1) {
+		// if(msgrcv(msqid, &msg, sizeof(message) - sizeof(long), SENDER_DATA_TYPE, 0) == -1) {
+		if(msgrcv(msqid, &msg, sizeof(msg), SENDER_DATA_TYPE, 0) == -1) {
 			perror("FAILURE: Message could not be received.\n");
 			fclose(fp);
 			exit(EXIT_FAILURE);
 		}
-		else
+		else {
 			printf("SUCCESS: Message received.\n");
+			msgSize = msg.size;
+		}
 		
 		/* If the sender is not telling us that we are done, then get to work */
 		if(msgSize != 0)
@@ -199,8 +206,10 @@ unsigned long mainLoop(const char* fileName)
 
 			ackMessage doneMsg;
 			doneMsg.mtype = RECV_DONE_TYPE;
+
 			printf("Telling sender we are ready for the next set of bytes.\n");
 			if(msgsnd(msqid, &doneMsg, sizeof(ackMessage) - sizeof(long), 0) == -1) {
+			// if(msgsnd(msqid, &doneMsg, sizeof(doneMsg), 0) == -1) {
 				perror("FAILURE: Unable to reply to sender.\n");
 				exit(EXIT_FAILURE);
 			} 
