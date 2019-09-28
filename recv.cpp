@@ -170,9 +170,9 @@ unsigned long mainLoop(const char *fileName)
 
 		message msg;
 		printf("Receiving message...\n");
-		printf("Size of message: %lu\n", sizeof(message));
-		printf("Size of long: %lu\n", sizeof(long));
-		printf("Size of msg: %lu\n", sizeof(msg));
+		// printf("Size of message: %lu\n", sizeof(message));
+		// printf("Size of long: %lu\n", sizeof(long));
+		// printf("Size of msg: %lu\n", sizeof(msg));
 		if(msgrcv(msqid, &msg, sizeof(message) - sizeof(long), SENDER_DATA_TYPE, 0) == -1) {
 		// if(msgrcv(msqid, &msg, sizeof(msg), SENDER_DATA_TYPE, 0) == -1) {
 			perror("msgrcv");
