@@ -172,7 +172,7 @@ unsigned long sendFile(const char* fileName)
  		 * that he finished saving a chunk of memory. 
  		 */
 
-		printf("Wait until receiver sends us a message.");
+		printf("Wait until receiver sends us a message.\n");
 		if(msgrcv(msqid, &rcvMsg, 0, RECV_DONE_TYPE, 0) == -1) {
 			perror("FAILURE: Did not wait to receive message.\n");
 			exit(-1);
