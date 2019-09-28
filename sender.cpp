@@ -6,7 +6,6 @@
 #include <string.h>
 #include <iostream>
 #include "msg.h" /* For the message struct */
-#include <sys/stat.h>
 
 using namespace std;
 
@@ -117,10 +116,8 @@ void cleanUp(const int &shmid, const int &msqid, void *sharedMemPtr)
  */
 unsigned long sendFile(const char *fileName)
 {
-
 	/* A buffer to store message we will send to the receiver. */
 	message sndMsg;
-	//sndMsg.size = MAX_MSG_PAYLOAD;
 
 	/* A buffer to store message received from the receiver. */
 	ackMessage rcvMsg;

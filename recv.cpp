@@ -7,8 +7,6 @@
 #include <string>
 #include "msg.h" /* For the message struct */
 
-#include <sys/stat.h>
-
 using namespace std;
 
 /* The size of the shared memory segment */
@@ -35,7 +33,7 @@ string recvFileName()
 
 	fileNameMsg msg;
 
-        /* COMPLETE: Receive the file name using msgrcv() */
+    /* COMPLETE: Receive the file name using msgrcv() */
 
 	printf("Receiving file name from sender...\n");
 	if(msgrcv(msqid, &msg, sizeof(fileNameMsg) - sizeof(long), FILE_NAME_TRANSFER_TYPE, 0) < 0) {
@@ -223,8 +221,6 @@ unsigned long mainLoop(const char *fileName)
 			fclose(fp);
 		}
 	}
-
-
 
 	return numBytesRecv;
 }
