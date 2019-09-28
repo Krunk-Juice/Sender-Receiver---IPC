@@ -9,20 +9,24 @@ Programming Language: C++
 
 Main Files:
 
-    ○   sender.cpp
+    •   sender.cpp
 
-    ○   recv.cpp
+    •   recv.cpp
 
-    ○   msg.h
+    •   msg.h
 
-    ○   keyfile.txt
+    •   keyfile.txt
 
-    ○   Makefile
+    •   Makefile
 
 Optional Files:
 
-    ○   *.o
+    •   *.o
 
-    ○   sender
-    
-    ○   recv
+    •   sender
+
+    •   recv
+
+    •   keyfile__recv.txt
+
+    •   reset_project.sh (Bash script to quickly delete *.o, sender, recv, and keyfile__recv.text)
