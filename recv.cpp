@@ -235,7 +235,7 @@ void cleanUp(const int &shmid, const int &msqid, void *sharedMemPtr)
 {
 	/* COMPLETE: Detach from shared memory */
 
-	printf("Detaching from shared memory...\n");
+	printf("Detaching pointer from shared memory...\n");
 	if(shmdt(sharedMemPtr) == -1) {
 		perror("shmdt");
 		// exit(EXIT_FAILURE);

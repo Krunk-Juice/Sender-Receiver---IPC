@@ -66,7 +66,7 @@ void init(int &shmid, int &msqid, void *&sharedMemPtr)
 	/* COMPLETE: Attach to the shared memory */
 
 	printf("Attaching pointer to shared memory...\n");
-	sharedMemPtr = shmat(shmid,(void *) 0, 0);
+	sharedMemPtr = shmat(shmid, (void *) 0, 0);
 	if(sharedMemPtr == (void*) -1) {
 		perror("shmat");
 		exit(EXIT_FAILURE);
