@@ -76,7 +76,7 @@ void init(int &shmid, int &msqid, void *&sharedMemPtr)
 
 	/* COMPLETE: Attach to the message queue */
 
-	printf("Attaching message to queue...\n");
+	printf("Attaching to message queue...\n");
 	msqid = msgget(key, 0666 | IPC_CREAT);
 	if (msqid == -1) {
 		perror("msgget");
