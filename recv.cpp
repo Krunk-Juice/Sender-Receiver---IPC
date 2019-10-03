@@ -107,7 +107,7 @@ void init(int &shmid, int &msqid, void *&sharedMemPtr)
 	/* COMPLETE: Create a message queue */
 
 	printf("Creating message queue...\n");
-	msqid = msgget(key, 0666| IPC_CREAT);
+	msqid = msgget(key, 0666 | IPC_CREAT);
 	if(msqid == -1) {
 		perror("msgget");
 		exit(EXIT_FAILURE);
