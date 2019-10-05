@@ -39,8 +39,12 @@ Optional Files:
 
 How to run the project:
 
-    1. In your Sender-Receiver---IPC directory open a terminal.
+    0. In your Sender-Receiver---IPC directory open a terminal.
         NOTE: Make sure you are in the appropriate directory when opening the terminal. ../Sender-Receiver---IPC
+
+    1. (Optional) Before you continue look in to the Sender-Receiver---IPC directory and see if there are existing sender.o, recv.o, sender, recv, and keyfile__recv.txt.
+        If those file exist in the directory, delete those files or type "./reset_project.sh" in to the terminal and press ENTER.
+        If those files do not exist in the directory, continue to step 2.
 
     2. Type:
 

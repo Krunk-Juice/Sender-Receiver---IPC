@@ -7,8 +7,6 @@
 #include <iostream>
 #include "msg.h" /* For the message struct */
 
-using namespace std;
-
 /* The size of the shared memory segment */
 #define SHARED_MEMORY_CHUNK_SIZE 1000
 
