@@ -69,3 +69,10 @@ How to run the project:
 Test Run:
 
 [![test-screenshot.png](https://i.postimg.cc/WzxTNKBC/test-screenshot.png)](https://postimg.cc/D4Qt5CyP)
+
+
+Team Collaborators
+
+Christopher Ta: Coding(recv.cpp and sender.cpp), research, testing, step process documentation
+
+Gilbert Paderogo: Coding(recv.cpp), testing, data flow diagram documentation
