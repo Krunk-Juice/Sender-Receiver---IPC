@@ -77,7 +77,7 @@ Test Run:
 
 Team Collaborators
 
-Christopher Ta: Coding(recv.cpp and sender.cpp), testing, step process documentation
+Christopher Ta: Coding(sender.cpp and recv.cpp), testing, step process documentation
 
 Gilbert Paderogo: Coding(recv.cpp), testing, data flow diagram documentation
 
