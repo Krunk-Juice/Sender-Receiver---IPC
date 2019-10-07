@@ -67,7 +67,7 @@ How to run the project:
 
         into the second terminal and press ENTER. This will run the receiver process.
 
-    6. Once the receiver process terminates, you can check back to the first terminal to see of the sender process has terminated as well.
+    6. Once the receiver process terminates, you can check back to the first terminal to see if the sender process has terminated as well.
 
 
 Test Run:
