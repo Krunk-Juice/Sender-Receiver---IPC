@@ -7,6 +7,8 @@ Gilbert Paderogo    |       CPSC 351-01       |       gspaderogo@csu.fullerton.e
 
 Bryan Cuevas        |       CPSC 351-01       |       bcuevas8@csu.fullerton.edu
 
+Sean Yu             |       CPSC 351-01       |       sean.yu@csu.fullerton.edu
+
 
 Programming Language: C++
 
@@ -82,3 +84,5 @@ Christopher Ta: Coding(sender.cpp and recv.cpp), testing, step process documenta
 Gilbert Paderogo: Coding(recv.cpp), testing, data flow diagram documentation
 
 Bryan Cuevas: Glossary definitions documentation, testing
+
+Sean Yu: Editing document, testing
