@@ -81,10 +81,10 @@ Test Run:
 
 Team Collaborators
 
-Christopher Ta: Coding(sender.cpp and recv.cpp), testing, step process documentation
+    Christopher Ta: Coding(sender.cpp and recv.cpp), testing, step process documentation
 
-Gilbert Paderogo: Coding(recv.cpp), testing, data flow diagram documentation
+    Gilbert Paderogo: Coding(recv.cpp), testing, data flow diagram documentation
 
-Bryan Cuevas: Glossary definitions documentation, testing
+    Bryan Cuevas: Glossary definitions documentation, testing
 
-Sean Yu: Editing document, testing
+    Sean Yu: Editing document, testing
